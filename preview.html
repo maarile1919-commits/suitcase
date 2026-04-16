@@ -83,29 +83,112 @@
   </div>
 
   <!-- Step 2 -->
-  <div id="step-2" class="max-w-4xl mx-auto p-6 md:p-12 min-h-screen flex flex-col items-center justify-center hidden">
-    <div class="bg-white rounded-2xl shadow-xl p-10 text-center border border-gray-100 w-full">
-      <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-        <svg class="w-10 h-10 text-primary" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
-      </div>
-      <h2 class="text-3xl font-bold mb-4 text-gray-800">여행 준비물 리스트 완성!</h2>
-      <p class="text-gray-500 mb-8 text-lg">AI가 분석한 맞춤형 짐싸기 리스트가 여기에 표시됩니다.</p>
-      
-      <div class="bg-gray-50 rounded-xl p-6 mb-8 text-left border border-gray-100 max-w-2xl mx-auto space-y-4">
-        <div class="flex items-center gap-3 text-gray-700 font-medium">
-          <div class="w-2 h-2 bg-primary rounded-full"></div> 여권 및 항공권
+  <div id="step-2" class="max-w-4xl mx-auto p-4 md:p-8 min-h-screen hidden">
+    <header class="mb-8 flex items-center justify-between">
+      <h1 class="text-3xl font-extrabold text-primary flex items-center gap-2">
+        PackWise <svg class="w-8 h-8 -rotate-45" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.2-1.1.6L3 8l6 4-3 3-3.2-.8c-.4-.1-.8.2-1 .6L1 16l4 2.5L7.5 23l1.2-.8c.4-.2.7-.6.6-1l-.8-3.2 3-3 4 6l1.2-.7c.4-.2.7-.6.6-1.1Z"/></svg>
+      </h1>
+      <button onclick="goBack()" class="px-4 py-2 bg-white border border-gray-200 text-gray-600 font-medium rounded-lg hover:bg-gray-50 transition text-sm shadow-sm">
+        여행 정보 수정
+      </button>
+    </header>
+
+    <div class="space-y-6 animate-[fade-in_0.7s_ease-out]">
+      <!-- Banner -->
+      <div class="bg-gradient-to-r from-primary to-[#0095CC] rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+          <svg class="w-32 h-32" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.2-1.1.6L3 8l6 4-3 3-3.2-.8c-.4-.1-.8.2-1 .6L1 16l4 2.5L7.5 23l1.2-.8c.4-.2.7-.6.6-1l-.8-3.2 3-3 4 6l1.2-.7c.4-.2.7-.6.6-1.1Z"/></svg>
         </div>
-        <div class="flex items-center gap-3 text-gray-700 font-medium">
-          <div class="w-2 h-2 bg-primary rounded-full"></div> 상비약 (감기약, 소화제)
-        </div>
-        <div class="flex items-center gap-3 text-gray-700 font-medium">
-          <div class="w-2 h-2 bg-primary rounded-full"></div> 편안한 런닝화
+        <p class="text-[#E6F7FF] font-medium mb-1">AI 맞춤형 여행 준비 완료</p>
+        <h2 id="preview-destinations" class="text-2xl md:text-3xl font-bold mb-3">일본 도쿄 → 오사카 여행을 준비해볼까요?</h2>
+        <div class="flex flex-wrap gap-4 text-sm font-medium bg-white/10 p-3 rounded-xl inline-flex backdrop-blur-sm shadow-sm">
+          <span class="flex items-center gap-1"><svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> <span id="preview-people">2명</span></span>
+          <span class="flex items-center gap-1"><svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg> 테마: <span id="preview-theme">먹방, 쇼핑</span></span>
         </div>
       </div>
 
-      <button onclick="goBack()" class="px-8 py-3 bg-white border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition">
-        정보 수정하기
-      </button>
+      <!-- AI Summary Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition">
+          <div class="flex items-center gap-2 mb-3 text-orange-500 font-bold">
+            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg> 기상 및 의류
+          </div>
+          <p class="text-gray-700 text-sm leading-relaxed">20도 안팎의 쾌적한 날씨입니다. 저녁을 대비해 얇은 가디건과 걷기 편한 운동화를 챙기세요.</p>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition">
+          <div class="flex items-center gap-2 mb-3 text-blue-500 font-bold">
+            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></svg> 행정 및 디지털
+          </div>
+          <p class="text-gray-700 text-sm leading-relaxed">Visit Japan Web 등록이 필수입니다. 구글 맵과 파파고, 110V 변환 어댑터(돼지코)를 꼭 준비하세요.</p>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition">
+          <div class="flex items-center gap-2 mb-3 text-green-500 font-bold">
+            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg> 금융 및 결제
+          </div>
+          <p class="text-gray-700 text-sm leading-relaxed">트래블로그 카드 사용이 매우 유리합니다. 하지만 아직 현금만 받는 로컬 식당이 있으니 30% 정도는 엔화 현금을 준비하세요.</p>
+        </div>
+      </div>
+
+      <!-- Checklists -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+        <!-- Pre-Checklist -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div class="bg-gray-50 px-6 py-4 border-b border-gray-100">
+            <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+              <svg class="w-5 h-5 text-primary" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg> 사전 체크리스트
+            </h3>
+          </div>
+          <div class="p-4 space-y-2">
+            <div onclick="this.classList.toggle('bg-gray-50'); this.querySelector('.ch-icn').classList.toggle('text-primary'); this.querySelector('.un-icn').classList.toggle('hidden');" class="flex items-start gap-3 p-3 rounded-xl cursor-pointer hover:bg-gray-50/80 transition-colors">
+              <div class="mt-0.5 shrink-0">
+                <svg class="un-icn w-5 h-5 text-gray-300" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
+                <svg class="ch-icn w-5 h-5 hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+              </div>
+              <div>
+                <p class="font-semibold text-gray-700">Visit Japan Web 정보 등록</p>
+                <p class="text-xs text-primary/80 font-medium mt-1 inline-block bg-primary/5 px-2 py-0.5 rounded">Tip: 입국 심사 시간을 반으로 줄일 수 있습니다.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Packing List -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div class="bg-gray-50 px-6 py-4 border-b border-gray-100">
+            <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+              <div class="bg-primary text-white text-xs px-2 py-0.5 rounded-full ml-1">AI 권장</div> 짐싸기 리스트
+            </h3>
+          </div>
+          <div class="p-4 space-y-2 max-h-[600px] overflow-y-auto">
+            <div onclick="this.classList.toggle('bg-gray-50'); this.querySelector('.ch-icn').classList.toggle('text-primary'); this.querySelector('.un-icn').classList.toggle('hidden');" class="flex items-start gap-3 p-3 rounded-xl cursor-pointer hover:bg-gray-50/80 transition-colors">
+              <div class="mt-0.5 shrink-0">
+                <svg class="un-icn w-5 h-5 text-gray-300" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
+                <svg class="ch-icn w-5 h-5 hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+              </div>
+              <div class="w-full">
+                <div class="flex items-center gap-2">
+                  <span class="text-[10px] px-1.5 py-0.5 rounded-sm font-bold tracking-wide bg-red-100 text-red-600">필수</span>
+                  <p class="font-semibold text-sm text-gray-700">여권 & 항공권</p>
+                </div>
+                <p class="text-xs text-primary/80 font-medium mt-1.5 inline-block bg-primary/5 px-2 py-0.5 rounded">Tip: 유효기간 6개월 이상 필수</p>
+              </div>
+            </div>
+            <div onclick="this.classList.toggle('bg-gray-50'); this.querySelector('.ch-icn').classList.toggle('text-primary'); this.querySelector('.un-icn').classList.toggle('hidden');" class="flex items-start gap-3 p-3 rounded-xl cursor-pointer hover:bg-gray-50/80 transition-colors">
+              <div class="mt-0.5 shrink-0">
+                <svg class="un-icn w-5 h-5 text-gray-300" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
+                <svg class="ch-icn w-5 h-5 hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+              </div>
+              <div class="w-full">
+                <div class="flex items-center gap-2">
+                  <span class="text-[10px] px-1.5 py-0.5 rounded-sm font-bold tracking-wide bg-gray-200 text-gray-600">추천</span>
+                  <p class="font-semibold text-sm text-gray-700">돼지코 (110V 어댑터)</p>
+                </div>
+                <p class="text-xs text-primary/80 font-medium mt-1.5 inline-block bg-primary/5 px-2 py-0.5 rounded">Tip: 현지 전압 지원을 확인하세요.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

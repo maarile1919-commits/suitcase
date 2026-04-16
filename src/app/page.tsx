@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, X, Plane, MapPin, Users, Sparkles, Loader2 } from "lucide-react";
+import { Plus, X, Plane, MapPin, Users, Sparkles, AlertCircle, Sun, CreditCard, FileCheck, CheckCircle2, Circle } from "lucide-react";
 
 export default function Home() {
   const [step, setStep] = useState<1 | 2>(1);
@@ -13,6 +13,11 @@ export default function Home() {
   ]);
   const [peopleCount, setPeopleCount] = useState(1);
   const [theme, setTheme] = useState("");
+
+  // States for AI Result
+  const [resultData, setResultData] = useState<any>(null);
+  const [localPreChecklist, setLocalPreChecklist] = useState<any[]>([]);
+  const [localPackingList, setLocalPackingList] = useState<any[]>([]);
 
   const handleAddDestination = () => {
     const last = destinations[destinations.length - 1];
@@ -39,44 +44,151 @@ export default function Home() {
     ));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const response = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ destinations, peopleCount, theme })
+      });
+      const data = await response.json();
+      
+      if (response.ok) {
+        setResultData(data);
+        setLocalPreChecklist(data.preChecklist || []);
+        setLocalPackingList(data.packingList || []);
+        setStep(2);
+      } else {
+        alert("분석 중 오류가 발생했습니다: " + (data.error || "알 수 없는 오류"));
+      }
+    } catch (e) {
+      alert("네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    } finally {
       setIsLoading(false);
-      setStep(2);
-    }, 2000);
+    }
   };
 
-  if (step === 2) {
-    return (
-      <main className="max-w-4xl mx-auto p-6 md:p-12 min-h-screen flex flex-col items-center justify-center">
-        <div className="bg-white rounded-2xl shadow-xl p-10 text-center border border-gray-100 w-full animate-in fade-in zoom-in duration-500">
-           <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-             <Sparkles className="w-10 h-10 text-primary" />
-           </div>
-           <h2 className="text-3xl font-bold mb-4 text-gray-800">여행 준비물 리스트 완성!</h2>
-           <p className="text-gray-500 mb-8 text-lg">AI가 분석한 맞춤형 짐싸기 리스트가 여기에 표시됩니다.</p>
-           
-           {/* Dummy List View */}
-           <div className="bg-gray-50 rounded-xl p-6 mb-8 text-left border border-gray-100 max-w-2xl mx-auto space-y-4">
-             <div className="flex items-center gap-3 text-gray-700 font-medium">
-               <div className="w-2 h-2 bg-primary rounded-full"></div> 여권 및 항공권
-             </div>
-             <div className="flex items-center gap-3 text-gray-700 font-medium">
-               <div className="w-2 h-2 bg-primary rounded-full"></div> 상비약 (감기약, 소화제)
-             </div>
-             <div className="flex items-center gap-3 text-gray-700 font-medium">
-               <div className="w-2 h-2 bg-primary rounded-full"></div> 편안한 런닝화
-             </div>
-           </div>
+  const toggleCheck = (id: string, listType: 'pre' | 'pack') => {
+    if (listType === 'pre') {
+      setLocalPreChecklist(prev => prev.map(item => item.id === id ? { ...item, isChecked: !item.isChecked } : item));
+    } else {
+      setLocalPackingList(prev => prev.map(item => item.id === id ? { ...item, isChecked: !item.isChecked } : item));
+    }
+  };
 
-           <button 
+  if (step === 2 && resultData) {
+    const destinationsContext = destinations.map(d => d.location).join(" → ");
+    
+    return (
+      <main className="max-w-4xl mx-auto p-4 md:p-8 min-h-screen">
+        <header className="mb-8 flex items-center justify-between">
+          <h1 className="text-3xl font-extrabold text-primary flex items-center gap-2">
+            PackWise <Plane className="w-8 h-8 -rotate-45" />
+          </h1>
+          <button 
              onClick={() => setStep(1)}
-             className="px-8 py-3 bg-white border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition"
+             className="px-4 py-2 bg-white border border-gray-200 text-gray-600 font-medium rounded-lg hover:bg-gray-50 transition text-sm shadow-sm"
            >
-             정보 수정하기
+             여행 정보 수정
            </button>
+        </header>
+
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          {/* Banner */}
+          <div className="bg-gradient-to-r from-primary to-primary-dark rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+             <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+               <Plane className="w-32 h-32" />
+             </div>
+             <p className="text-primary-100 font-medium mb-1">AI 맞춤형 여행 준비 완료</p>
+             <h2 className="text-2xl md:text-3xl font-bold mb-3">{destinationsContext} 여행을 준비해볼까요?</h2>
+             <div className="flex flex-wrap gap-4 text-sm font-medium bg-white/10 p-3 rounded-xl inline-flex backdrop-blur-sm shadow-sm">
+               <span className="flex items-center gap-1"><Users className="w-4 h-4" /> {peopleCount}명</span>
+               {theme && <span className="flex items-center gap-1"><Sparkles className="w-4 h-4" /> 테마: {theme}</span>}
+             </div>
+          </div>
+
+          {/* AI Summary Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm shadow-gray-200/50 hover:shadow-md transition">
+               <div className="flex items-center gap-2 mb-3 text-orange-500 font-bold">
+                 <Sun className="w-5 h-5" /> 기상 및 의류
+               </div>
+               <p className="text-gray-700 text-sm leading-relaxed">{resultData.summary.weather}</p>
+            </div>
+            <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm shadow-gray-200/50 hover:shadow-md transition">
+               <div className="flex items-center gap-2 mb-3 text-blue-500 font-bold">
+                 <FileCheck className="w-5 h-5" /> 행정 및 디지털
+               </div>
+               <p className="text-gray-700 text-sm leading-relaxed">{resultData.summary.admin}</p>
+            </div>
+            <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm shadow-gray-200/50 hover:shadow-md transition">
+               <div className="flex items-center gap-2 mb-3 text-green-500 font-bold">
+                 <CreditCard className="w-5 h-5" /> 금융 및 결제
+               </div>
+               <p className="text-gray-700 text-sm leading-relaxed">{resultData.summary.finance}</p>
+            </div>
+          </div>
+
+          {/* Checklists */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+             {/* Pre-Checklist */}
+             <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+               <div className="bg-gray-50 px-6 py-4 border-b border-gray-100">
+                 <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                   <AlertCircle className="w-5 h-5 text-primary" /> 사전 체크리스트
+                 </h3>
+               </div>
+               <div className="p-4 space-y-2">
+                 {localPreChecklist.map((item) => (
+                   <div 
+                     key={item.id} 
+                     onClick={() => toggleCheck(item.id, 'pre')}
+                     className={`flex items-start gap-3 p-3 rounded-xl cursor-pointer transition-colors ${item.isChecked ? 'bg-gray-50' : 'hover:bg-gray-50/80'}`}
+                   >
+                     <div className="mt-0.5 shrink-0">
+                       {item.isChecked ? <CheckCircle2 className="w-5 h-5 text-primary" /> : <Circle className="w-5 h-5 text-gray-300" />}
+                     </div>
+                     <div>
+                       <p className={`font-semibold ${item.isChecked ? 'text-gray-400 line-through' : 'text-gray-700'}`}>{item.task}</p>
+                       <p className="text-xs text-primary/80 font-medium mt-1 inline-block bg-primary/5 px-2 py-0.5 rounded">Tip: {item.reason}</p>
+                     </div>
+                   </div>
+                 ))}
+                 {localPreChecklist.length === 0 && <p className="text-gray-400 text-sm text-center py-4">항목이 없습니다.</p>}
+               </div>
+             </div>
+
+             {/* Packing List */}
+             <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+               <div className="bg-gray-50 px-6 py-4 border-b border-gray-100">
+                 <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                   <div className="bg-primary text-white text-xs px-2 py-0.5 rounded-full ml-1">AI 권장</div> 짐싸기 리스트
+                 </h3>
+               </div>
+               <div className="p-4 space-y-2 max-h-[600px] overflow-y-auto">
+                 {localPackingList.map((item) => (
+                   <div 
+                     key={item.id} 
+                     onClick={() => toggleCheck(item.id, 'pack')}
+                     className={`flex items-start gap-3 p-3 rounded-xl cursor-pointer transition-colors ${item.isChecked ? 'bg-gray-50' : 'hover:bg-gray-50/80'}`}
+                   >
+                     <div className="mt-0.5 shrink-0">
+                       {item.isChecked ? <CheckCircle2 className="w-5 h-5 text-primary" /> : <Circle className="w-5 h-5 text-gray-300" />}
+                     </div>
+                     <div className="w-full">
+                       <div className="flex items-center gap-2">
+                         <span className={`text-[10px] px-1.5 py-0.5 rounded-sm font-bold tracking-wide ${item.category === '필수' ? 'bg-red-100 text-red-600' : 'bg-gray-200 text-gray-600'}`}>{item.category}</span>
+                         <p className={`font-semibold text-sm ${item.isChecked ? 'text-gray-400 line-through' : 'text-gray-700'}`}>{item.task}</p>
+                       </div>
+                       <p className="text-xs text-primary/80 font-medium mt-1.5 inline-block bg-primary/5 px-2 py-0.5 rounded break-keep">Tip: {item.reason}</p>
+                     </div>
+                   </div>
+                 ))}
+                 {localPackingList.length === 0 && <p className="text-gray-400 text-sm text-center py-4">항목이 없습니다.</p>}
+               </div>
+             </div>
+          </div>
         </div>
       </main>
     );
@@ -212,7 +324,6 @@ export default function Home() {
           >
             {isLoading ? (
               <>
-                {/* Airplane animation flying sideways loop */}
                 <Plane className="w-7 h-7 animate-bounce" />
                 <span className="animate-pulse">AI가 최적의 리스트를 구성 중입니다...</span>
               </>
