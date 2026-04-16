@@ -184,7 +184,6 @@ export default function Home() {
     const destinationsContext = destinations.map(d => d.location).join(" → ");
     
     return (
-    return (
       <main className="bg-gradient-to-br from-sky-400 via-pink-300 to-sky-400 bg-[length:200%_200%] animate-clouds min-h-screen relative pb-20">
         <div className="max-w-4xl mx-auto p-4 md:p-8 relative z-10">
           
