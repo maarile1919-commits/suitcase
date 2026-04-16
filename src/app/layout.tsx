@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Jua } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const jua = Jua({ subsets: ["latin"], weight: "400" });
 
 export const metadata: Metadata = {
-  title: "PackWise - AI 맞춤형 여행 준비 비서",
-  description: "당신의 완벽한 짐싸기 파트너",
+  title: "게으른 여행자 (The Lazy Packer)",
+  description: "신나는 여행만 생각하세요. 귀찮은 짐싸기는 AI가 완벽하게 끝낼게요.",
 };
 
 export default function RootLayout({
@@ -16,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className={`${inter.className} bg-gray-50 min-h-screen antialiased`}>
+      <body className={`${jua.className} bg-gray-50 min-h-screen antialiased`}>
         {children}
       </body>
     </html>

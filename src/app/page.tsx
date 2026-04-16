@@ -8,6 +8,13 @@ import jsPDF from "jspdf";
 export default function Home() {
   const [step, setStep] = useState<1 | 2>(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingPhrase, setLoadingPhrase] = useState("비행기 모드로 전환 중...");
+  const loadingMessages = [
+    "비행기 모드로 전환 중...",
+    "AI가 당신의 캐리어를 채우고 있습니다...",
+    "현지 날씨와 꿀팁을 긁어모으는 중...",
+    "가장 완벽한 짐싸기 리스트를 작성 중..."
+  ];
 
   // States for form
   const [destinations, setDestinations] = useState([
@@ -54,6 +61,12 @@ export default function Home() {
 
   const handleSubmit = async () => {
     setIsLoading(true);
+    let msgIndex = 0;
+    const loadingTimer = setInterval(() => {
+      msgIndex = (msgIndex + 1) % loadingMessages.length;
+      setLoadingPhrase(loadingMessages[msgIndex]);
+    }, 2500);
+
     try {
       const response = await fetch("/api/generate", {
         method: "POST",
@@ -68,11 +81,12 @@ export default function Home() {
         setLocalPackingList(data.packingList || []);
         setStep(2);
       } else {
-        alert("분석 중 오류가 발생했습니다: " + (data.error || "알 수 없는 오류"));
+        alert(`Google AI 서버 거부 (원인: ${data.details || data.error})\n\n해당 API 키에 권한이 없거나 모델이 지원되지 않습니다.`);
       }
     } catch (e) {
       alert("네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
     } finally {
+      clearInterval(loadingTimer);
       setIsLoading(false);
     }
   };
@@ -170,26 +184,27 @@ export default function Home() {
     const destinationsContext = destinations.map(d => d.location).join(" → ");
     
     return (
-      <main className="bg-gray-50 min-h-screen relative pb-20">
-        <div className="max-w-4xl mx-auto p-4 md:p-8">
+    return (
+      <main className="bg-gradient-to-br from-sky-400 via-pink-300 to-sky-400 bg-[length:200%_200%] animate-clouds min-h-screen relative pb-20">
+        <div className="max-w-4xl mx-auto p-4 md:p-8 relative z-10">
           
           {/* Header Controls */}
-          <header className="mb-6 flex items-center justify-between">
-            <h1 className="text-3xl font-extrabold text-primary flex items-center gap-2">
-              PackWise <Plane className="w-8 h-8 -rotate-45" />
+          <header className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 text-white drop-shadow-md">
+            <h1 className="text-4xl font-extrabold flex items-center gap-2 tracking-wide">
+              게으른 여행자 <Plane className="w-10 h-10 -rotate-45" />
             </h1>
             <div className="flex gap-2">
               <button 
                 onClick={exportToPDF}
                 disabled={isPdfLoading}
-                className="px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark transition flex items-center gap-2 shadow-sm disabled:opacity-50"
+                className="px-5 py-2.5 bg-white/90 backdrop-blur text-airline font-bold rounded-xl hover:bg-white transition flex items-center gap-2 shadow-lg disabled:opacity-50"
               >
-                {isPdfLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                <span className="hidden md:inline">PDF로 저장하기</span>
+                {isPdfLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Download className="w-5 h-5" />}
+                <span className="hidden md:inline text-lg">PDF로 저장하기</span>
               </button>
               <button 
                  onClick={() => setStep(1)}
-                 className="px-4 py-2 bg-white border border-gray-200 text-gray-600 font-medium rounded-lg hover:bg-gray-50 transition text-sm shadow-sm"
+                 className="px-5 py-2.5 bg-white/20 backdrop-blur border border-white/50 text-white font-medium rounded-xl hover:bg-white/30 transition text-lg shadow-sm"
                >
                  정보 수정
                </button>
@@ -197,26 +212,45 @@ export default function Home() {
           </header>
 
           {/* PDF Export Content Wrapper */}
-          <div id="pdf-content" className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 bg-gray-50 p-2 rounded-xl">
+          <div id="pdf-content" className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 bg-gray-50/95 backdrop-blur-3xl p-3 md:p-6 rounded-3xl shadow-2xl">
             {/* Banner */}
-            <div className="bg-gradient-to-r from-primary to-primary-dark rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
-               <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-                 <Plane className="w-32 h-32" />
+            <div className="bg-gradient-to-r from-airline to-sunset rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
+               <div className="absolute top-0 right-0 p-8 opacity-20 pointer-events-none">
+                 <Plane className="w-40 h-40" />
                </div>
-               <p className="text-primary-100 font-medium mb-1">AI 맞춤형 여행 준비 완료</p>
-               <h2 className="text-2xl md:text-3xl font-bold mb-3">{destinationsContext} 여행을 준비해볼까요?</h2>
-               <div className="flex flex-wrap gap-4 text-sm font-medium bg-white/10 p-3 rounded-xl inline-flex backdrop-blur-sm shadow-sm">
-                 <span className="flex items-center gap-1"><Users className="w-4 h-4" /> {peopleCount}명</span>
-                 {theme && <span className="flex items-center gap-1"><Sparkles className="w-4 h-4" /> 테마: {theme}</span>}
+               <p className="text-white/80 font-medium mb-2 text-lg">모두 준비되었습니다, 탑승객님!</p>
+               <h2 className="text-3xl md:text-4xl font-bold mb-4">{destinationsContext} 비행을 시작할까요?</h2>
+               <div className="flex flex-wrap gap-4 text-base font-medium bg-white/20 p-4 rounded-2xl inline-flex backdrop-blur-md shadow-sm border border-white/20">
+                 <span className="flex items-center gap-1"><Users className="w-5 h-5" /> {peopleCount}명</span>
+                 {theme && <span className="flex items-center gap-1"><Sparkles className="w-5 h-5" /> 테마: {theme}</span>}
                </div>
             </div>
 
-            {/* AI Summary Section */}
-            <div className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-md transition">
-               <div className="flex items-center gap-2 mb-4 text-primary font-bold text-xl">
-                 <div className="bg-primary/10 p-2 rounded-lg"><Sparkles className="w-5 h-5" /></div> 여행지 AI 요약
+            {/* AI Summary Section - Boarding Pass Style */}
+            <div className="relative bg-white p-6 md:p-8 rounded-3xl border-2 border-dashed border-gray-300 shadow-xl mx-auto max-w-4xl mx-2 md:mx-4 overflow-visible">
+               {/* Ticket Punches */}
+               <div className="absolute top-1/2 -left-5 w-10 h-10 bg-gray-100 rounded-full -translate-y-1/2 shadow-inner border-r border-gray-200"></div>
+               <div className="absolute top-1/2 -right-5 w-10 h-10 bg-gray-100 rounded-full -translate-y-1/2 shadow-inner border-l border-gray-200"></div>
+               
+               <div className="flex flex-col md:flex-row md:items-center justify-between border-b-2 border-gray-100 pb-5 mb-5 space-y-4 md:space-y-0">
+                 <div className="flex items-center gap-3 text-airline font-black text-2xl uppercase tracking-widest">
+                   <Plane className="w-8 h-8 text-sunset" /> BOARDING PASS
+                 </div>
+                 <div className="text-right text-gray-400 font-mono text-sm tracking-widest hidden md:block">
+                   TICKET #{Date.now().toString().slice(-6)}
+                 </div>
                </div>
-               <p className="text-gray-700 text-base leading-relaxed whitespace-pre-wrap">{resultData.summary}</p>
+               
+               <p className="text-gray-700 text-lg md:text-xl leading-relaxed whitespace-pre-wrap font-medium">{resultData.summary}</p>
+               
+               {/* Fake Barcode */}
+               <div className="mt-8 pt-6 border-t-2 border-dashed border-gray-200 flex justify-center opacity-70">
+                 <div className="h-14 w-full flex gap-1 justify-between max-w-lg bg-white">
+                   {[...Array(50)].map((_, i) => (
+                     <div key={i} className="bg-gray-800 h-full rounded-sm" style={{ width: `${Math.random() * 4 + 1}px` }}></div>
+                   ))}
+                 </div>
+               </div>
             </div>
 
             {/* Checklists */}
@@ -233,14 +267,14 @@ export default function Home() {
                      <div 
                        key={item.id} 
                        onClick={() => toggleCheck(item.id, 'pre')}
-                       className={`flex items-start gap-3 p-3 rounded-xl cursor-pointer transition-colors ${item.isChecked ? 'bg-gray-50 opacity-60' : 'hover:bg-gray-50/80'} ${item.isUpdated ? 'animate-highlight' : ''}`}
+                       className={`flex items-start gap-4 p-4 rounded-2xl cursor-pointer transition-all duration-500 ease-out border-2 ${item.isChecked ? 'bg-gray-100 opacity-50 scale-[0.97] translate-y-2 border-transparent shadow-inner' : 'bg-white hover:-translate-y-1 hover:shadow-md border-gray-100'} ${item.isUpdated ? 'animate-highlight ring-2 ring-sunset border-transparent' : ''}`}
                      >
-                       <div className="mt-0.5 shrink-0 transition-transform active:scale-95">
-                         {item.isChecked ? <CheckCircle2 className="w-5 h-5 text-primary" /> : <Circle className="w-5 h-5 text-gray-300" />}
+                       <div className={`mt-0.5 shrink-0 transition-transform duration-500 ${item.isChecked ? 'scale-110' : 'scale-100'}`}>
+                         {item.isChecked ? <CheckCircle2 className="w-7 h-7 text-airline" /> : <Circle className="w-7 h-7 text-gray-300" />}
                        </div>
                        <div>
-                         <p className={`font-semibold transition-all ${item.isChecked ? 'text-gray-400 line-through' : 'text-gray-800'}`}>{item.task}</p>
-                         <p className={`text-xs font-medium mt-1 inline-block px-2 py-0.5 rounded transition-all ${item.isChecked ? 'bg-gray-100 text-gray-400' : 'bg-primary/5 text-primary/80'}`}>{item.reason}</p>
+                         <p className={`font-semibold text-lg transition-all ${item.isChecked ? 'text-gray-400 line-through' : 'text-gray-800'}`}>{item.task}</p>
+                         <p className={`text-base font-medium mt-1 inline-block px-3 py-1 rounded transition-all ${item.isChecked ? 'bg-gray-200 text-gray-500' : 'bg-airline/10 text-airline'}`}>{item.reason}</p>
                        </div>
                      </div>
                    ))}
@@ -267,14 +301,14 @@ export default function Home() {
                          <div 
                            key={item.id} 
                            onClick={() => toggleCheck(item.id, 'pack')}
-                           className={`flex items-start gap-3 p-3 rounded-xl cursor-pointer transition-colors ${item.isChecked ? 'bg-gray-50 opacity-60' : 'hover:bg-gray-50/80'} ${item.isUpdated ? 'animate-highlight' : ''}`}
+                           className={`flex items-start gap-4 p-4 rounded-2xl cursor-pointer transition-all duration-500 ease-out border-2 ${item.isChecked ? 'bg-gray-100 opacity-50 scale-[0.97] translate-y-2 border-transparent shadow-inner' : 'bg-white hover:-translate-y-1 hover:shadow-md border-gray-100'} ${item.isUpdated ? 'animate-highlight ring-2 ring-sunset border-transparent' : ''}`}
                          >
-                           <div className="mt-0.5 shrink-0 transition-transform active:scale-95">
-                             {item.isChecked ? <CheckCircle2 className="w-5 h-5 text-primary" /> : <Circle className="w-5 h-5 text-gray-300" />}
+                           <div className={`mt-0.5 shrink-0 transition-transform duration-500 ${item.isChecked ? 'scale-110' : 'scale-100'}`}>
+                             {item.isChecked ? <CheckCircle2 className="w-7 h-7 text-airline" /> : <Circle className="w-7 h-7 text-gray-300" />}
                            </div>
                            <div className="w-full">
-                             <p className={`font-semibold text-sm transition-all ${item.isChecked ? 'text-gray-400 line-through' : 'text-gray-800'}`}>{item.task}</p>
-                             <p className={`text-xs font-medium mt-1.5 inline-block px-2 py-0.5 rounded break-keep transition-all ${item.isChecked ? 'bg-gray-100 text-gray-400' : 'bg-primary/5 text-primary/80'}`}>{item.reason}</p>
+                             <p className={`font-semibold text-lg transition-all ${item.isChecked ? 'text-gray-400 line-through' : 'text-gray-800'}`}>{item.task}</p>
+                             <p className={`text-base font-medium mt-1.5 inline-block px-3 py-1 rounded break-keep transition-all ${item.isChecked ? 'bg-gray-200 text-gray-500' : 'bg-sunset/10 text-sunset'}`}>{item.reason}</p>
                            </div>
                          </div>
                        ))}
@@ -361,17 +395,19 @@ export default function Home() {
   }
 
   return (
-    <main className="max-w-3xl mx-auto p-6 md:p-12 min-h-screen flex flex-col justify-center">
+    <main className="bg-gradient-to-br from-sky-400 via-pink-300 to-sky-400 bg-[length:200%_200%] animate-clouds min-h-screen flex flex-col justify-center relative overflow-hidden">
+      <div className="max-w-3xl mx-auto p-6 md:p-12 relative z-10 w-full">
       {/* Header */}
-      <header className="text-center mb-10 animate-in fade-in slide-in-from-top-4 duration-700">
-        <h1 className="text-5xl md:text-6xl font-extrabold text-primary mb-4 flex items-center justify-center gap-3">
-          PackWise <Plane className="w-12 h-12 -rotate-45" />
+      <header className="text-center mb-10 animate-in fade-in slide-in-from-top-4 duration-700 text-white drop-shadow-md">
+        <h1 className="text-5xl md:text-7xl font-extrabold mb-4 flex items-center justify-center gap-3">
+          게으른 여행자 <Plane className="w-14 h-14 -rotate-45" />
         </h1>
-        <p className="text-xl text-gray-500 font-medium">당신의 완벽한 짐싸기 파트너</p>
+        <p className="text-2xl font-medium mt-2">설레는 여행, 짐싸기는 제게 맡기세요 ✈️</p>
+        <p className="text-lg mt-3 opacity-90 font-light">당신은 창밖 풍경만 감상하면 됩니다. 어디로, 언제, 누구와 떠나시나요?</p>
       </header>
 
       {/* Main Input Card */}
-      <div className="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 p-6 md:p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 fill-mode-both">
+      <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 p-6 md:p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 fill-mode-both">
         
         {/* Destinations */}
         <div className="space-y-4">
@@ -482,22 +518,23 @@ export default function Home() {
           <button 
             onClick={handleSubmit}
             disabled={isLoading}
-            className={`w-full py-4.5 min-h-[60px] rounded-xl text-white font-bold text-xl transition-all flex items-center justify-center gap-3 shadow-xl ${
+            className={`w-full py-4.5 min-h-[64px] rounded-2xl text-white font-bold text-2xl transition-all flex items-center justify-center gap-3 shadow-xl ${
               isLoading 
-                ? "bg-primary/80 cursor-wait shadow-primary/20" 
-                : "bg-primary hover:bg-[#0095CC] hover:-translate-y-1 shadow-primary/30 active:scale-[0.98]"
+                ? "bg-sunset cursor-wait shadow-sunset/20" 
+                : "bg-gradient-to-r from-airline to-sunset hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98]"
             }`}
           >
             {isLoading ? (
               <>
-                <Plane className="w-7 h-7 animate-bounce" />
-                <span className="animate-pulse">AI가 최적의 리스트를 구성 중입니다...</span>
+                <Plane className="w-8 h-8 animate-bounce" />
+                <span className="animate-pulse">{loadingPhrase}</span>
               </>
             ) : (
-              "가보자!"
+              "내 짐 부탁해! ✈️"
             )}
           </button>
         </div>
+      </div>
       </div>
     </main>
   );
