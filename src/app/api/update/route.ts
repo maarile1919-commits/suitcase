@@ -45,7 +45,7 @@ ${JSON.stringify(previousState, null, 2)}
       contents: [
         {
           role: "user",
-          parts: [{ text: \`다음 사용자의 요청사항을 반영해주세요: "\${userMessage}"\` }]
+          parts: [{ text: `다음 사용자의 요청사항을 반영해주세요: "${userMessage}"` }]
         }
       ],
       systemInstruction: {
