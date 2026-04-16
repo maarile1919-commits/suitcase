@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>PackWise Preview</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { primary: { DEFAULT: '#00AEEF', dark: '#0095CC' } }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-50 min-h-screen antialiased">
+  <div id="step-1" class="max-w-3xl mx-auto p-6 md:p-12 min-h-screen flex flex-col justify-center">
+    <header class="text-center mb-10">
+      <h1 class="text-5xl md:text-6xl font-extrabold text-primary mb-4 flex items-center justify-center gap-3">
+        PackWise 
+        <svg class="w-12 h-12 -rotate-45" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.2-1.1.6L3 8l6 4-3 3-3.2-.8c-.4-.1-.8.2-1 .6L1 16l4 2.5L7.5 23l1.2-.8c.4-.2.7-.6.6-1l-.8-3.2 3-3 4 6l1.2-.7c.4-.2.7-.6.6-1.1Z"/></svg>
+      </h1>
+      <p class="text-xl text-gray-500 font-medium">당신의 완벽한 짐싸기 파트너</p>
+    </header>
+
+    <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 p-6 md:p-8 space-y-8">
+      <div class="space-y-4">
+        <label class="flex items-center gap-2 text-lg font-bold text-gray-800">
+          <div class="bg-primary/10 p-2 rounded-lg">
+            <svg class="text-primary w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          여행지 및 일정
+        </label>
+        
+        <div id="destinations-container" class="space-y-4">
+          <!-- Rows will be injected by JS -->
+        </div>
+
+        <button onclick="addDestination()" class="w-full py-3.5 flex items-center justify-center gap-2 text-primary font-semibold hover:bg-primary/5 rounded-xl transition border-2 border-dashed border-primary/20 hover:border-primary/40">
+          <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg> 
+          행 추가
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="space-y-4">
+          <label class="flex items-center gap-2 text-lg font-bold text-gray-800">
+            <div class="bg-primary/10 p-2 rounded-lg">
+              <svg class="text-primary w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div> 
+            인원수
+          </label>
+          <div class="relative">
+            <select class="w-full px-4 py-3.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 appearance-none bg-gray-50/50 cursor-pointer font-medium text-gray-700">
+              <option>1명</option><option>2명</option><option>3명</option>
+              <option>4명</option><option>5명</option><option>6명</option>
+            </select>
+            <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">▼</div>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <label class="flex items-center gap-2 text-lg font-bold text-gray-800">
+            <div class="bg-primary/10 p-2 rounded-lg">
+              <svg class="text-primary w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+            </div>
+            여행 테마
+          </label>
+          <input type="text" class="w-full px-4 py-3.5 rounded-xl border border-gray-200 bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-primary/50" placeholder="물놀이, 등산, 효도관광 등 자유롭게 입력하세요"/>
+        </div>
+      </div>
+
+      <div class="pt-6">
+        <button id="submit-btn" onclick="handleSubmit()" class="w-full py-4 min-h-[60px] rounded-xl text-white font-bold text-xl transition-all flex items-center justify-center gap-3 shadow-xl bg-primary hover:bg-[#0095CC] hover:-translate-y-1 shadow-primary/30">
+          <span id="submit-text">가보자!</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div id="step-2" class="max-w-4xl mx-auto p-6 md:p-12 min-h-screen flex flex-col items-center justify-center hidden">
+    <div class="bg-white rounded-2xl shadow-xl p-10 text-center border border-gray-100 w-full">
+      <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+        <svg class="w-10 h-10 text-primary" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+      </div>
+      <h2 class="text-3xl font-bold mb-4 text-gray-800">여행 준비물 리스트 완성!</h2>
+      <p class="text-gray-500 mb-8 text-lg">AI가 분석한 맞춤형 짐싸기 리스트가 여기에 표시됩니다.</p>
+      
+      <div class="bg-gray-50 rounded-xl p-6 mb-8 text-left border border-gray-100 max-w-2xl mx-auto space-y-4">
+        <div class="flex items-center gap-3 text-gray-700 font-medium">
+          <div class="w-2 h-2 bg-primary rounded-full"></div> 여권 및 항공권
+        </div>
+        <div class="flex items-center gap-3 text-gray-700 font-medium">
+          <div class="w-2 h-2 bg-primary rounded-full"></div> 상비약 (감기약, 소화제)
+        </div>
+        <div class="flex items-center gap-3 text-gray-700 font-medium">
+          <div class="w-2 h-2 bg-primary rounded-full"></div> 편안한 런닝화
+        </div>
+      </div>
+
+      <button onclick="goBack()" class="px-8 py-3 bg-white border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition">
+        정보 수정하기
+      </button>
+    </div>
+  </div>
+
+  <script>
+    let destinations = [{id: 1}];
+    function renderDestinations() {
+      const container = document.getElementById('destinations-container');
+      container.innerHTML = '';
+      destinations.forEach(dest => {
+        const div = document.createElement('div');
+        div.className = 'flex flex-col md:flex-row gap-3 relative bg-gray-50/50 p-4 rounded-xl border border-gray-100';
+        div.innerHTML = `
+          <div class="flex-1 flex gap-3">
+            <div class="flex-1">
+              <input type="date" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm">
+            </div>
+            <div class="flex-1">
+              <input type="date" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm">
+            </div>
+          </div>
+          <div class="flex-[1.5] flex gap-2 w-full">
+            <input type="text" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm" placeholder="국가 및 도시 (예: 영국 런던)">
+            ${destinations.length > 1 ? `
+              <button onclick="removeDestination(${dest.id})" class="p-3 text-red-500 hover:bg-red-50 hover:text-red-600 rounded-xl transition-colors shrink-0">
+                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+              </button>
+            ` : ''}
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function addDestination() {
+      destinations.push({id: Date.now()});
+      renderDestinations();
+    }
+
+    function removeDestination(id) {
+      destinations = destinations.filter(d => d.id !== id);
+      renderDestinations();
+    }
+
+    function handleSubmit() {
+      const btn = document.getElementById('submit-btn');
+      btn.className = "w-full py-4 min-h-[60px] rounded-xl text-white font-bold text-xl transition-all flex items-center justify-center gap-3 shadow-xl bg-primary/80 cursor-wait shadow-primary/20 pointer-events-none";
+      btn.innerHTML = `
+        <svg class="w-7 h-7 animate-bounce" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.2-1.1.6L3 8l6 4-3 3-3.2-.8c-.4-.1-.8.2-1 .6L1 16l4 2.5L7.5 23l1.2-.8c.4-.2.7-.6.6-1l-.8-3.2 3-3 4 6l1.2-.7c.4-.2.7-.6.6-1.1Z"/></svg>
+        <span class="animate-pulse">AI가 최적의 리스트를 구성 중입니다...</span>
+      `;
+      
+      setTimeout(() => {
+        document.getElementById('step-1').classList.add('hidden');
+        document.getElementById('step-2').classList.remove('hidden');
+        
+        // Reset button
+        btn.className = "w-full py-4 min-h-[60px] rounded-xl text-white font-bold text-xl transition-all flex items-center justify-center gap-3 shadow-xl bg-primary hover:bg-[#0095CC] hover:-translate-y-1 shadow-primary/30 pointer-events-auto";
+        btn.innerHTML = `<span id="submit-text">가보자!</span>`;
+      }, 2000);
+    }
+
+    function goBack() {
+      document.getElementById('step-2').classList.add('hidden');
+      document.getElementById('step-1').classList.remove('hidden');
+    }
+
+    renderDestinations();
+  </script>
+</body>
+</html>
