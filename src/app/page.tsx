@@ -253,7 +253,7 @@ export default function Home() {
             </div>
 
             {/* Checklists */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+            <div className="flex flex-col gap-8 pt-6">
                {/* Pre-Checklist */}
                <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col">
                  <div className="bg-gray-50 px-6 py-4 border-b border-gray-100">
@@ -261,7 +261,7 @@ export default function Home() {
                      <AlertCircle className="w-5 h-5 text-primary" /> 사전 체크 리스트
                    </h3>
                  </div>
-                 <div className="p-4 space-y-2 flex-1">
+                 <div className="p-4 space-y-3 flex-1">
                    {localPreChecklist.map((item) => (
                      <div 
                        key={item.id} 
@@ -288,7 +288,7 @@ export default function Home() {
                      <div className="bg-primary text-white text-xs px-2 py-0.5 rounded-full ml-1">AI</div> 짐싸기 리스트
                    </h3>
                  </div>
-                 <div className="p-4 space-y-6 flex-1 max-h-[800px] overflow-y-auto">
+                 <div className="p-4 space-y-8 flex-1 h-full max-h-none overflow-visible">
                    
                    {/* 필수 품목 */}
                    <div>
