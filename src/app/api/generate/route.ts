@@ -87,8 +87,8 @@ Input:
       const errorMessage = data.error?.message || "Unknown API error";
       console.error("Native API Error:", errorMessage);
       return NextResponse.json(
-        { error: "Failed to generate AI list", details: errorMessage },
-        { status: res.status }
+        { error: "Google API Error", details: errorMessage },
+        { status: 500 }
       );
     }
 
