@@ -15,9 +15,15 @@ export default function Home() {
   const [theme, setTheme] = useState("");
 
   const handleAddDestination = () => {
+    const last = destinations[destinations.length - 1];
     setDestinations([
       ...destinations,
-      { id: Date.now(), startDate: "", endDate: "", location: "" }
+      { 
+        id: Date.now(), 
+        startDate: last ? last.startDate : "", 
+        endDate: last ? last.endDate : "", 
+        location: last ? last.location : "" 
+      }
     ]);
   };
 
