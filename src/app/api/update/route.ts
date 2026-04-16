@@ -1,4 +1,3 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -41,17 +40,45 @@ ${JSON.stringify(previousState, null, 2)}
       );
     }
 
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
+    const payload = {
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: \`다음 사용자의 요청사항을 반영해주세요: "\${userMessage}"\` }]
+        }
+      ],
+      systemInstruction: {
+        parts: [{ text: systemPrompt }]
+      },
+      generationConfig: {
+        responseMimeType: "application/json"
+      }
+    };
 
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
-      generationConfig: { responseMimeType: "application/json" },
-      systemInstruction: systemPrompt
+    const res = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload)
     });
 
-    const result = await model.generateContent(`다음 사용자의 요청사항을 반영해주세요: "${userMessage}"`);
-    const response = await result.response;
-    const text = response.text();
+    const data = await res.json();
+
+    if (!res.ok) {
+      const errorMessage = data.error?.message || "Unknown API error";
+      console.error("Native API Error:", errorMessage);
+      return NextResponse.json(
+        { error: "Failed to generate AI list", details: errorMessage },
+        { status: res.status }
+      );
+    }
+
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) {
+      throw new Error("Invalid response missing content parts.");
+    }
 
     return NextResponse.json(JSON.parse(text));
   } catch (error: any) {

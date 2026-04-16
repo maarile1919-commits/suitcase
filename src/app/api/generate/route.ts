@@ -1,4 +1,3 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -8,7 +7,6 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { destinations, peopleCount, theme } = body;
 
-    // Build the context string from destinations array
     const destinationsContext = destinations
       .map((d: any) => `${d.location} (${d.startDate} ~ ${d.endDate})`)
       .join(", ");
@@ -58,17 +56,46 @@ Input:
       );
     }
 
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
+    const payload = {
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: "나의 여행을 위한 맞춤형 분석을 제시해주세요." }]
+        }
+      ],
+      systemInstruction: {
+        parts: [{ text: systemPrompt }]
+      },
+      generationConfig: {
+        responseMimeType: "application/json"
+      }
+    };
 
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
-      generationConfig: { responseMimeType: "application/json" },
-      systemInstruction: systemPrompt
+    const res = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload)
     });
 
-    const result = await model.generateContent("나의 여행을 위한 맞춤형 분석을 제시해주세요.");
-    const response = await result.response;
-    const text = response.text();
+    const data = await res.json();
+
+    if (!res.ok) {
+      // API에서 반환한 진짜 에러 메시지
+      const errorMessage = data.error?.message || "Unknown API error";
+      console.error("Native API Error:", errorMessage);
+      return NextResponse.json(
+        { error: "Failed to generate AI list", details: errorMessage },
+        { status: res.status }
+      );
+    }
+
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) {
+      throw new Error("Invalid response missing content parts.");
+    }
     
     return NextResponse.json(JSON.parse(text));
   } catch (error: any) {
