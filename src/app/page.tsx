@@ -108,50 +108,36 @@ export default function Home() {
              </div>
           </div>
 
-          {/* AI Summary Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm shadow-gray-200/50 hover:shadow-md transition">
-               <div className="flex items-center gap-2 mb-3 text-orange-500 font-bold">
-                 <Sun className="w-5 h-5" /> 기상 및 의류
-               </div>
-               <p className="text-gray-700 text-sm leading-relaxed">{resultData.summary.weather}</p>
-            </div>
-            <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm shadow-gray-200/50 hover:shadow-md transition">
-               <div className="flex items-center gap-2 mb-3 text-blue-500 font-bold">
-                 <FileCheck className="w-5 h-5" /> 행정 및 디지털
-               </div>
-               <p className="text-gray-700 text-sm leading-relaxed">{resultData.summary.admin}</p>
-            </div>
-            <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm shadow-gray-200/50 hover:shadow-md transition">
-               <div className="flex items-center gap-2 mb-3 text-green-500 font-bold">
-                 <CreditCard className="w-5 h-5" /> 금융 및 결제
-               </div>
-               <p className="text-gray-700 text-sm leading-relaxed">{resultData.summary.finance}</p>
-            </div>
+          {/* AI Summary Section */}
+          <div className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-md transition">
+             <div className="flex items-center gap-2 mb-4 text-primary font-bold text-xl">
+               <div className="bg-primary/10 p-2 rounded-lg"><Sparkles className="w-5 h-5" /></div> 여행지 AI 요약
+             </div>
+             <p className="text-gray-700 text-base leading-relaxed whitespace-pre-wrap">{resultData.summary}</p>
           </div>
 
           {/* Checklists */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
              {/* Pre-Checklist */}
-             <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+             <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col">
                <div className="bg-gray-50 px-6 py-4 border-b border-gray-100">
                  <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                   <AlertCircle className="w-5 h-5 text-primary" /> 사전 체크리스트
+                   <AlertCircle className="w-5 h-5 text-primary" /> 사전 체크 리스트
                  </h3>
                </div>
-               <div className="p-4 space-y-2">
+               <div className="p-4 space-y-2 flex-1">
                  {localPreChecklist.map((item) => (
                    <div 
                      key={item.id} 
                      onClick={() => toggleCheck(item.id, 'pre')}
-                     className={`flex items-start gap-3 p-3 rounded-xl cursor-pointer transition-colors ${item.isChecked ? 'bg-gray-50' : 'hover:bg-gray-50/80'}`}
+                     className={`flex items-start gap-3 p-3 rounded-xl cursor-pointer transition-colors ${item.isChecked ? 'bg-gray-50 opacity-60' : 'hover:bg-gray-50/80'}`}
                    >
-                     <div className="mt-0.5 shrink-0">
+                     <div className="mt-0.5 shrink-0 transition-transform active:scale-95">
                        {item.isChecked ? <CheckCircle2 className="w-5 h-5 text-primary" /> : <Circle className="w-5 h-5 text-gray-300" />}
                      </div>
                      <div>
-                       <p className={`font-semibold ${item.isChecked ? 'text-gray-400 line-through' : 'text-gray-700'}`}>{item.task}</p>
-                       <p className="text-xs text-primary/80 font-medium mt-1 inline-block bg-primary/5 px-2 py-0.5 rounded">Tip: {item.reason}</p>
+                       <p className={`font-semibold transition-all ${item.isChecked ? 'text-gray-400 line-through' : 'text-gray-800'}`}>{item.task}</p>
+                       <p className={`text-xs font-medium mt-1 inline-block px-2 py-0.5 rounded transition-all ${item.isChecked ? 'bg-gray-100 text-gray-400' : 'bg-primary/5 text-primary/80'}`}>{item.reason}</p>
                      </div>
                    </div>
                  ))}
@@ -160,32 +146,62 @@ export default function Home() {
              </div>
 
              {/* Packing List */}
-             <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+             <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col">
                <div className="bg-gray-50 px-6 py-4 border-b border-gray-100">
                  <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
                    <div className="bg-primary text-white text-xs px-2 py-0.5 rounded-full ml-1">AI 권장</div> 짐싸기 리스트
                  </h3>
                </div>
-               <div className="p-4 space-y-2 max-h-[600px] overflow-y-auto">
-                 {localPackingList.map((item) => (
-                   <div 
-                     key={item.id} 
-                     onClick={() => toggleCheck(item.id, 'pack')}
-                     className={`flex items-start gap-3 p-3 rounded-xl cursor-pointer transition-colors ${item.isChecked ? 'bg-gray-50' : 'hover:bg-gray-50/80'}`}
-                   >
-                     <div className="mt-0.5 shrink-0">
-                       {item.isChecked ? <CheckCircle2 className="w-5 h-5 text-primary" /> : <Circle className="w-5 h-5 text-gray-300" />}
-                     </div>
-                     <div className="w-full">
-                       <div className="flex items-center gap-2">
-                         <span className={`text-[10px] px-1.5 py-0.5 rounded-sm font-bold tracking-wide ${item.category === '필수' ? 'bg-red-100 text-red-600' : 'bg-gray-200 text-gray-600'}`}>{item.category}</span>
-                         <p className={`font-semibold text-sm ${item.isChecked ? 'text-gray-400 line-through' : 'text-gray-700'}`}>{item.task}</p>
+               <div className="p-4 space-y-6 flex-1 max-h-[800px] overflow-y-auto">
+                 
+                 {/* 필수 품목 */}
+                 <div>
+                   <h4 className="text-sm font-bold text-gray-500 mb-3 ml-2 flex items-center gap-2">
+                     <span className="w-1.5 h-1.5 rounded-full bg-red-400"></span> 필수 리스트
+                   </h4>
+                   <div className="space-y-2">
+                     {localPackingList.filter(i => i.category === '필수').map((item) => (
+                       <div 
+                         key={item.id} 
+                         onClick={() => toggleCheck(item.id, 'pack')}
+                         className={`flex items-start gap-3 p-3 rounded-xl cursor-pointer transition-colors ${item.isChecked ? 'bg-gray-50 opacity-60' : 'hover:bg-gray-50/80'}`}
+                       >
+                         <div className="mt-0.5 shrink-0 transition-transform active:scale-95">
+                           {item.isChecked ? <CheckCircle2 className="w-5 h-5 text-primary" /> : <Circle className="w-5 h-5 text-gray-300" />}
+                         </div>
+                         <div className="w-full">
+                           <p className={`font-semibold text-sm transition-all ${item.isChecked ? 'text-gray-400 line-through' : 'text-gray-800'}`}>{item.task}</p>
+                           <p className={`text-xs font-medium mt-1.5 inline-block px-2 py-0.5 rounded break-keep transition-all ${item.isChecked ? 'bg-gray-100 text-gray-400' : 'bg-primary/5 text-primary/80'}`}>{item.reason}</p>
+                         </div>
                        </div>
-                       <p className="text-xs text-primary/80 font-medium mt-1.5 inline-block bg-primary/5 px-2 py-0.5 rounded break-keep">Tip: {item.reason}</p>
-                     </div>
+                     ))}
                    </div>
-                 ))}
-                 {localPackingList.length === 0 && <p className="text-gray-400 text-sm text-center py-4">항목이 없습니다.</p>}
+                 </div>
+
+                 {/* 추천 품목 */}
+                 <div>
+                   <h4 className="text-sm font-bold text-gray-500 mb-3 ml-2 flex items-center gap-2">
+                     <span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span> 있으면 좋은 추천
+                   </h4>
+                   <div className="space-y-2">
+                     {localPackingList.filter(i => i.category !== '필수').map((item) => (
+                       <div 
+                         key={item.id} 
+                         onClick={() => toggleCheck(item.id, 'pack')}
+                         className={`flex items-start gap-3 p-3 rounded-xl cursor-pointer transition-colors ${item.isChecked ? 'bg-gray-50 opacity-60' : 'hover:bg-gray-50/80'}`}
+                       >
+                         <div className="mt-0.5 shrink-0 transition-transform active:scale-95">
+                           {item.isChecked ? <CheckCircle2 className="w-5 h-5 text-primary" /> : <Circle className="w-5 h-5 text-gray-300" />}
+                         </div>
+                         <div className="w-full">
+                           <p className={`font-semibold text-sm transition-all ${item.isChecked ? 'text-gray-400 line-through' : 'text-gray-800'}`}>{item.task}</p>
+                           <p className={`text-xs font-medium mt-1.5 inline-block px-2 py-0.5 rounded break-keep transition-all ${item.isChecked ? 'bg-gray-100 text-gray-400' : 'bg-primary/5 text-primary/80'}`}>{item.reason}</p>
+                         </div>
+                       </div>
+                     ))}
+                   </div>
+                 </div>
+
                </div>
              </div>
           </div>
