@@ -13,6 +13,15 @@ const config: Config = {
           DEFAULT: '#00AEEF',
           dark: '#0095CC',
         }
+      },
+      keyframes: {
+        highlight: {
+          '0%, 100%': { backgroundColor: 'transparent' },
+          '10%, 80%': { backgroundColor: '#FEF08A' },
+        }
+      },
+      animation: {
+        highlight: 'highlight 4s ease-in-out',
       }
     },
   },
