@@ -61,18 +61,21 @@ Input:
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash-latest",
-      generationConfig: {
-        responseMimeType: "application/json",
-      },
-      systemInstruction: systemPrompt,
+      model: "gemini-pro"
     });
 
-    // We can just send a trigger message, because all instructions are in the system prompt.
-    const result = await model.generateContent("나의 여행을 위한 맞춤형 분석을 제시해주세요.");
+    const combinedPrompt = systemPrompt + "\n\n사용자의 실제 입력: 나의 여행을 위한 맞춤형 데이터 분석 및 리스트 생성을 시작해주세요.";
+    const result = await model.generateContent(combinedPrompt);
     const response = await result.response;
-    const text = response.text();
-
+    let text = response.text();
+    
+    // 안전한 파싱을 위해 Markdown 코드 블록이 있다면 제거
+    if (text.startsWith("\`\`\`json")) {
+      text = text.replace(/^\`\`\`json\n/, "").replace(/\n\`\`\`$/, "");
+    } else if (text.startsWith("\`\`\`")) {
+      text = text.replace(/^\`\`\`\n/, "").replace(/\n\`\`\`$/, "");
+    }
+    
     return NextResponse.json(JSON.parse(text));
   } catch (error: any) {
     console.error("Generate API Error:", error);

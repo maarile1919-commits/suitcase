@@ -44,16 +44,20 @@ ${JSON.stringify(previousState, null, 2)}
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash-latest",
-      generationConfig: {
-        responseMimeType: "application/json",
-      },
-      systemInstruction: systemPrompt,
+      model: "gemini-pro"
     });
 
-    const result = await model.generateContent(`다음 사용자의 요청사항을 반영해주세요: "${userMessage}"`);
+    const combinedPrompt = systemPrompt + "\n\n사용자의 실제 요청: " + userMessage;
+    const result = await model.generateContent(combinedPrompt);
     const response = await result.response;
-    const text = response.text();
+    let text = response.text();
+    
+    // 안전한 파싱을 위해 Markdown 코드 블록이 있다면 제거
+    if (text.startsWith("\`\`\`json")) {
+      text = text.replace(/^\`\`\`json\n/, "").replace(/\n\`\`\`$/, "");
+    } else if (text.startsWith("\`\`\`")) {
+      text = text.replace(/^\`\`\`\n/, "").replace(/\n\`\`\`$/, "");
+    }
 
     return NextResponse.json(JSON.parse(text));
   } catch (error: any) {
