@@ -419,45 +419,53 @@ export default function Home() {
           
           <div className="space-y-4">
             {destinations.map((dest, index) => (
-              <div key={dest.id} className="flex flex-col sm:flex-row gap-3 relative bg-gray-50/50 p-3 sm:p-4 rounded-xl border border-gray-100 hover:border-primary/20 transition-colors">
-                <div className="w-full sm:flex-1 flex gap-2 sm:gap-3">
-                  <div className="flex-1 min-w-0">
+              <div key={dest.id} className="flex flex-col gap-4 relative bg-gray-50/80 p-4 sm:p-5 rounded-2xl border border-gray-100 hover:border-primary/20 transition-all shadow-sm">
+                
+                {/* 1. 여행지 입력 */}
+                <div className="w-full flex gap-2 items-start">
+                  <div className="flex-1 min-w-0 relative pt-1">
+                    <label className="text-[11px] font-bold text-primary absolute -top-1.5 left-3 bg-gray-50 px-1 rounded flex items-center gap-1 z-10"><MapPin className="w-3 h-3"/> 목적지</label>
+                    <input 
+                      type="text" 
+                      value={dest.location}
+                      onChange={(e) => handleDestinationChange(dest.id, 'location', e.target.value)}
+                      className="w-full px-4 py-3.5 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 text-base md:text-lg transition-all min-w-0"
+                      placeholder="국가 및 도시 (예: 일본 오사카)"
+                    />
+                  </div>
+                  {destinations.length > 1 && (
+                    <button 
+                      onClick={() => handleRemoveDestination(dest.id)}
+                      className="p-3.5 text-red-400 hover:bg-red-50 hover:text-red-500 rounded-xl transition-colors shrink-0 mt-1"
+                      aria-label="행 삭제"
+                    >
+                      <X className="w-6 h-6" />
+                    </button>
+                  )}
+                </div>
+
+                {/* 2. 날짜 입력 */}
+                <div className="w-full flex gap-3 mt-1">
+                  <div className="flex-1 min-w-0 relative pt-1">
+                    <label className="text-[11px] font-bold text-gray-500 absolute -top-1.5 left-3 bg-gray-50 px-1 rounded z-10">가는 날</label>
                     <input 
                       type="date" 
                       value={dest.startDate}
                       onChange={(e) => handleDestinationChange(dest.id, 'startDate', e.target.value)}
-                      className="w-full px-2 sm:px-4 py-3 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 text-xs sm:text-sm transition-all min-w-0"
-                      placeholder="시작일"
+                      className="w-full px-3 md:px-4 py-3 md:py-3.5 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm md:text-base transition-all min-w-0 appearance-none flex items-center"
                     />
                   </div>
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0 relative pt-1">
+                    <label className="text-[11px] font-bold text-gray-500 absolute -top-1.5 left-3 bg-gray-50 px-1 rounded z-10">오는 날</label>
                     <input 
                       type="date" 
                       value={dest.endDate}
                       onChange={(e) => handleDestinationChange(dest.id, 'endDate', e.target.value)}
-                      className="w-full px-2 sm:px-4 py-3 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 text-xs sm:text-sm transition-all min-w-0"
-                      placeholder="종료일"
+                      className="w-full px-3 md:px-4 py-3 md:py-3.5 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm md:text-base transition-all min-w-0 appearance-none flex items-center"
                     />
                   </div>
                 </div>
-                <div className="w-full sm:flex-[1.5] flex gap-2">
-                  <input 
-                    type="text" 
-                    value={dest.location}
-                    onChange={(e) => handleDestinationChange(dest.id, 'location', e.target.value)}
-                    className="w-full px-3 py-3 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm transition-all min-w-0"
-                    placeholder="국가 및 도시 (예: 유럽 런던)"
-                  />
-                  {destinations.length > 1 && (
-                    <button 
-                      onClick={() => handleRemoveDestination(dest.id)}
-                      className="p-3 text-red-400 hover:bg-red-50 hover:text-red-500 rounded-xl transition-colors shrink-0 flex items-center justify-center"
-                      aria-label="행 삭제"
-                    >
-                      <X className="w-5 h-5" />
-                    </button>
-                  )}
-                </div>
+
               </div>
             ))}
           </div>
