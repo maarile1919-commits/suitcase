@@ -189,21 +189,21 @@ export default function Home() {
           
           {/* Header Controls */}
           <header className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 text-white drop-shadow-md">
-            <h1 className="text-4xl font-extrabold flex items-center gap-2 tracking-wide">
-              게으른 여행자 <Plane className="w-10 h-10 -rotate-45" />
+            <h1 className="text-3xl sm:text-4xl font-extrabold flex items-center gap-2 tracking-wide flex-wrap">
+              게으른 여행자 <Plane className="w-8 h-8 sm:w-10 sm:h-10 -rotate-45 shrink-0" />
             </h1>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2 w-full md:w-auto">
               <button 
                 onClick={exportToPDF}
                 disabled={isPdfLoading}
-                className="px-5 py-2.5 bg-white/90 backdrop-blur text-airline font-bold rounded-xl hover:bg-white transition flex items-center gap-2 shadow-lg disabled:opacity-50"
+                className="flex-1 md:flex-none px-4 sm:px-5 py-2.5 bg-white/90 backdrop-blur text-airline font-bold rounded-xl hover:bg-white transition flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 text-sm sm:text-lg"
               >
-                {isPdfLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Download className="w-5 h-5" />}
-                <span className="hidden md:inline text-lg">PDF로 저장하기</span>
+                {isPdfLoading ? <Loader2 className="w-5 h-5 animate-spin shrink-0" /> : <Download className="w-5 h-5 shrink-0" />}
+                <span className="whitespace-nowrap">PDF 저장</span>
               </button>
               <button 
                  onClick={() => setStep(1)}
-                 className="px-5 py-2.5 bg-white/20 backdrop-blur border border-white/50 text-white font-medium rounded-xl hover:bg-white/30 transition text-lg shadow-sm"
+                 className="flex-1 md:flex-none px-4 sm:px-5 py-2.5 bg-white/20 backdrop-blur border border-white/50 text-white font-medium rounded-xl hover:bg-white/30 transition shadow-sm text-sm sm:text-lg whitespace-nowrap"
                >
                  정보 수정
                </button>
@@ -350,9 +350,9 @@ export default function Home() {
         </div>
 
         {/* Floating AI Chat Button */}
-        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end">
           {isChatOpen && (
-            <div className="bg-white border border-gray-200 rounded-2xl shadow-2xl p-4 w-80 md:w-96 mb-4 animate-in fade-in slide-in-from-bottom-2">
+            <div className="bg-white border border-gray-200 rounded-2xl shadow-2xl p-4 w-[calc(100vw-2rem)] sm:w-80 md:w-96 mb-4 animate-in fade-in slide-in-from-bottom-2">
                <div className="flex justify-between items-center mb-3">
                  <h4 className="font-bold text-gray-800 flex items-center gap-2">
                    <MessageSquare className="w-4 h-4 text-primary" /> 리스트 편집하기
@@ -398,11 +398,11 @@ export default function Home() {
       <div className="max-w-3xl mx-auto p-6 md:p-12 relative z-10 w-full">
       {/* Header */}
       <header className="text-center mb-10 animate-in fade-in slide-in-from-top-4 duration-700 text-white drop-shadow-md">
-        <h1 className="text-5xl md:text-7xl font-extrabold mb-4 flex items-center justify-center gap-3">
-          게으른 여행자 <Plane className="w-14 h-14 -rotate-45" />
+        <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold mb-4 flex flex-wrap items-center justify-center gap-3">
+          게으른 여행자 <Plane className="w-10 h-10 md:w-14 md:h-14 -rotate-45 shrink-0" />
         </h1>
-        <p className="text-2xl font-medium mt-2">설레는 여행, 짐싸기는 제게 맡기세요 ✈️</p>
-        <p className="text-lg mt-3 opacity-90 font-light">당신은 창밖 풍경만 감상하면 됩니다. 어디로, 언제, 누구와 떠나시나요?</p>
+        <p className="text-xl md:text-2xl font-medium mt-2 break-keep">설레는 여행, 짐싸기는 제게 맡기세요 ✈️</p>
+        <p className="text-base md:text-lg mt-2 md:mt-3 opacity-90 font-light break-keep">당신은 창밖 풍경만 감상하면 됩니다. 어디로, 언제, 누구와 떠나시나요?</p>
       </header>
 
       {/* Main Input Card */}
@@ -419,39 +419,39 @@ export default function Home() {
           
           <div className="space-y-4">
             {destinations.map((dest, index) => (
-              <div key={dest.id} className="flex flex-col md:flex-row gap-3 relative bg-gray-50/50 p-4 rounded-xl border border-gray-100 hover:border-primary/20 transition-colors">
-                <div className="flex-1 flex gap-3">
-                  <div className="flex-1">
+              <div key={dest.id} className="flex flex-col sm:flex-row gap-3 relative bg-gray-50/50 p-3 sm:p-4 rounded-xl border border-gray-100 hover:border-primary/20 transition-colors">
+                <div className="w-full sm:flex-1 flex gap-2 sm:gap-3">
+                  <div className="flex-1 min-w-0">
                     <input 
                       type="date" 
                       value={dest.startDate}
                       onChange={(e) => handleDestinationChange(dest.id, 'startDate', e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm transition-all"
+                      className="w-full px-2 sm:px-4 py-3 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 text-xs sm:text-sm transition-all min-w-0"
                       placeholder="시작일"
                     />
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <input 
                       type="date" 
                       value={dest.endDate}
                       onChange={(e) => handleDestinationChange(dest.id, 'endDate', e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm transition-all"
+                      className="w-full px-2 sm:px-4 py-3 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 text-xs sm:text-sm transition-all min-w-0"
                       placeholder="종료일"
                     />
                   </div>
                 </div>
-                <div className="flex-[1.5] flex gap-2 w-full">
+                <div className="w-full sm:flex-[1.5] flex gap-2">
                   <input 
                     type="text" 
                     value={dest.location}
                     onChange={(e) => handleDestinationChange(dest.id, 'location', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm transition-all"
-                    placeholder="국가 및 도시 (예: 영국 런던)"
+                    className="w-full px-3 py-3 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm transition-all min-w-0"
+                    placeholder="국가 및 도시 (예: 유럽 런던)"
                   />
                   {destinations.length > 1 && (
                     <button 
                       onClick={() => handleRemoveDestination(dest.id)}
-                      className="p-3 text-red-400 hover:bg-red-50 hover:text-red-500 rounded-xl transition-colors shrink-0"
+                      className="p-3 text-red-400 hover:bg-red-50 hover:text-red-500 rounded-xl transition-colors shrink-0 flex items-center justify-center"
                       aria-label="행 삭제"
                     >
                       <X className="w-5 h-5" />
